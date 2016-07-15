@@ -332,7 +332,6 @@ class GameConqueror():
         self.last_hexedit_address = (0,0) # used for hexview
         self.is_scanning = False
         self.exit_flag = False # currently for data_worker only, other 'threads' may also use this flag
-        self.is_data_worker_working = False
 
         self.backend = GameConquerorBackend()
         self.check_backend_version()
@@ -860,7 +859,6 @@ class GameConqueror():
     def progress_watcher(self):
         Gdk.threads_enter()
         self.scanprogress_progressbar.set_fraction(self.backend.get_scan_progress())
-        Gdk.flush()
         Gdk.threads_leave()
         return True
 
@@ -1015,7 +1013,6 @@ class GameConqueror():
         self.update_scan_result()
         self.is_first_scan = False
 
-        Gdk.flush()
         Gdk.threads_leave()
         self.command_lock.release()
 
@@ -1073,7 +1070,6 @@ class GameConqueror():
         if (not self.is_scanning) and (self.pid != 0) and self.command_lock.acquire(0): # non-blocking
             Gdk.threads_enter()
 
-            self.is_data_worker_working = True
             # Write to memory locked values in cheat list
             for i in self.cheatlist_liststore:
                 if i[1] and i[6]: # locked and valid
@@ -1100,9 +1096,7 @@ class GameConqueror():
                     else:
                         row[1] = '??'
                         row[3] = False
-            self.is_data_worker_working = False
 
-            Gdk.flush()
             Gdk.threads_leave()
             self.command_lock.release()
         return not self.exit_flag
@@ -1146,9 +1140,6 @@ class GameConqueror():
         self.exit_flag = True
         Gtk.main_quit()
 
-    def main(self):
-        Gtk.main()
-
     def check_backend_version(self):
         if self.backend.get_version() != VERSION:
             self.show_error(_('Version of scanmem mismatched, you may encounter problems. Please make sure you are using the same version of GameConqueror as scanmem.'))
@@ -1180,4 +1171,4 @@ if __name__ == '__main__':
         gc_instance.input_box.set_text(args.search_value)
 
     # Start
-    gc_instance.main()
+    Gtk.main()
