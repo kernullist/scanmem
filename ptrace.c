@@ -306,6 +306,7 @@ bool checkmatches(globals_t * vars,
     int required_extra_bytes_to_record = 0;
     vars->num_matches = 0;
     vars->scan_progress = 0.0;
+    vars->scan_stop = false;
     
     if (choose_scanroutine(vars->options.scan_data_type, match_type) == false)
     {
@@ -376,6 +377,8 @@ bool checkmatches(globals_t * vars,
                     /* for user, just print a dot */
                     print_a_dot();
                 }
+                /* stop scanning if asked to */
+                if (vars->scan_stop) break;
             }
         }
         ++bytes_scanned;
@@ -501,6 +504,7 @@ bool searchregions(globals_t * vars, scan_match_type_t match_type, const userval
         total_scan_bytes += ((region_t *)n->data)->size;
 
     vars->scan_progress = 0.0;
+    vars->scan_stop = false;
     n = vars->regions->head;
 
     /* check every memory region */
@@ -621,11 +625,15 @@ bool searchregions(globals_t * vars, scan_match_type_t match_type, const userval
                     print_a_dot();
                     /* for front-end, update percentage */
                     vars->scan_progress += progress_per_dot;
+                    /* stop scanning if asked to */
+                    if (vars->scan_stop) break;
                 }
             }
         }
 
         vars->scan_progress += progress_per_dot;
+        /* stop scanning if asked to */
+        if (vars->scan_stop) break;
         n = n->next;
         show_user("ok\n");
 #if HAVE_PROCMEM

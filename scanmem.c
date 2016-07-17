@@ -44,6 +44,7 @@ globals_t globals = {
     NULL,                       /* matches */
     0,                          /* match count */
     0,                          /* scan progress */
+    false,                      /* scan stop */
     NULL,                       /* regions */
     NULL,                       /* commands */
     NULL,                       /* current_cmdline */
@@ -208,4 +209,9 @@ double get_scan_progress()
 void reset_scan_progress()
 {
     globals.scan_progress = 0;
+}
+
+void set_scan_stop(bool stop)
+{
+    globals.scan_stop = stop;
 }
