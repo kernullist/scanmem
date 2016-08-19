@@ -336,7 +336,7 @@ class GameConqueror():
         self.is_scanning = False
         self.exit_flag = False # currently for data_worker only, other 'threads' may also use this flag
 
-        self.backend = GameConquerorBackend()
+        self.backend = GameConquerorBackend(os.path.join(LIBDIR, 'libscanmem.so'))
         self.check_backend_version()
         self.is_first_scan = True
         GLib.timeout_add(DATA_WORKER_INTERVAL, self.data_worker)
