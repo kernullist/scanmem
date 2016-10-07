@@ -152,7 +152,6 @@ class GameConqueror():
         self.scan_button = self.builder.get_object('Scan_Button')
         self.stop_button = self.builder.get_object('Stop_Button')
         self.reset_button = self.builder.get_object('Reset_Button')
-        self.is_first_scan = True
 
         ###
         # Set scan data type
@@ -339,7 +338,7 @@ class GameConqueror():
 
         self.backend = GameConquerorBackend()
         self.check_backend_version()
-        self.search_count = 0
+        self.is_first_scan = True
         GLib.timeout_add(DATA_WORKER_INTERVAL, self.data_worker)
         self.command_lock = threading.RLock()
 
@@ -972,7 +971,6 @@ class GameConqueror():
             self.maps.append(item)
 
     def reset_scan(self):
-        self.search_count = 0
         # reset search type and value type
         self.scanresult_liststore.clear()
         
@@ -1022,8 +1020,7 @@ class GameConqueror():
             return
 
         # disable the window before perform scanning, such that if result come so fast, we won't mess it up
-        self.search_count +=1 
-        self.scanoption_frame.set_sensitive(False) # no need to check search_count here
+        self.scanoption_frame.set_sensitive(False)
 
         # disable set of widgets interfering with the scan
         for wid in self.disablelist:
@@ -1035,8 +1032,9 @@ class GameConqueror():
 
         self.is_scanning = True
         # set scan options only when first scan, since this will reset backend
-        if self.search_count == 1:
+        if self.is_first_scan:
             self.apply_scan_settings()
+            self.is_first_scan = False
         self.backend.reset_scan_progress()
         self.progress_watcher_id = GLib.timeout_add(PROGRESS_INTERVAL,
             self.progress_watcher, priority=GLib.PRIORITY_DEFAULT_IDLE)
@@ -1063,7 +1061,6 @@ class GameConqueror():
 
         self.is_scanning = False
         self.update_scan_result()
-        self.is_first_scan = False
 
         Gdk.threads_leave()
         self.command_lock.release()
