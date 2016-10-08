@@ -32,7 +32,6 @@ class GameConquerorBackend():
         'get_num_matches' : (ctypes.c_long, ),
         'get_version' : (ctypes.c_char_p, ),
         'get_scan_progress' : (ctypes.c_double, ),
-        'reset_scan_progress' : (None,),
         'set_scan_stop' : (ctypes.c_bool, )
     }
 
@@ -75,9 +74,6 @@ class GameConquerorBackend():
 
     def get_scan_progress(self):
         return self.lib.get_scan_progress()
-
-    def reset_scan_progress(self):
-        self.lib.reset_scan_progress()
 
     def set_scan_stop(self, stop):
         self.lib.set_scan_stop(stop)
