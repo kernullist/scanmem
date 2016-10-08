@@ -503,6 +503,9 @@ bool handler__reset(globals_t * vars, char **argv, unsigned argc)
         return false;
     }
 
+    /* reset scan progress */
+    vars->scan_progress = 0;
+
     return true;
 }
 

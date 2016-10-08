@@ -206,11 +206,6 @@ double get_scan_progress()
     return globals.scan_progress;
 }
 
-void reset_scan_progress()
-{
-    globals.scan_progress = 0;
-}
-
 void set_scan_stop(bool stop)
 {
     globals.scan_stop = stop;
